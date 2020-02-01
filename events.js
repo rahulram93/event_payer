@@ -1,10 +1,10 @@
 var events = [{
   xpath: '//*[@id="root"]/div/div[1]/div/div[3]/a[1]/span/div/div[1]/a',
-  type: 'click'
+  type: 'mouseover'
 },{
-  xpath: '//*[@id="root"]/div/div[1]/div/div[3]/a[1]/span/div/div[2]/div/ul/li[1]/a/span',
+  xpath: '//*[@id="root"]/div/div[1]/div/div[2]/a[1]/span',
   type: 'click'
 }]
 
-var ep = new EventPlayer();
-ep.startPlay(events);
+var ep = new EventPlayer(events);
+ep.startPlay();
