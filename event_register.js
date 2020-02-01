@@ -2,7 +2,7 @@ var EventPlayer = (function() {
   var EventPlayer = function(events, index){
     this.timeoutEvent = 1000;
     this.totalEvents;
-    this.events = events;
+    this.events = events || [];
     this.eventsCompleted = index || 0;
     this.mouseEvents = [
       'auxclick',
@@ -10,11 +10,11 @@ var EventPlayer = (function() {
       'contextmenu',
       'dblclick',
       'mousedown',
-      'mouseenter',
-      'mouseleave',
-      'mousemove',
+      //'mouseenter',
+      //'mouseleave',
+      //'mousemove',
       'mouseover',
-      'mouseout',
+      //'mouseout',
       'mouseup',
       'pointerlockchange',
       'pointerlockerror',
@@ -24,6 +24,7 @@ var EventPlayer = (function() {
     return this;
   }
   
+  // Player
   EventPlayer.prototype.eventDispatch = function(event) {
     var element = document.evaluate(event.xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
     if (!element) return false;
@@ -35,14 +36,14 @@ var EventPlayer = (function() {
         cancelable: true
       });
     }
-    if (!domEvent) return;
+    if (!domEvent) return false;
     element.dispatchEvent(domEvent);
     return true;
   }
   
   EventPlayer.prototype.playEvent = function(index){
     var events = this.events;
-    if (index >= events.length) return;
+    if (index >= events.length) return true;
     if ( this.eventDispatch(events[index])){
       var that = this;
       that.eventsCompleted = that.eventsCompleted + 1;
@@ -56,5 +57,24 @@ var EventPlayer = (function() {
     var that = this;
     setTimeout(this.playEvent.bind(that, that.eventsCompleted), this.timeoutEvent);
   }
+
+
+  // Listener
+  EventPlayer.prototype.eventListener = function(){
+    var that = this;
+    this.mouseEvents.forEach(function(event){
+      document.addEventListener(event, function(event){
+        that.events.push({
+          xpath: event.target,
+          type: event.type
+        });
+      });
+    });
+  }
+
+  EventPlayer.prototype.startCapture = function(){
+    this.eventListener();
+  }
+
   return EventPlayer;
 })();

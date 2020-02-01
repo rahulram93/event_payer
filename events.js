@@ -6,5 +6,7 @@ var events = [{
   type: 'click'
 }]
 
-var ep = new EventPlayer(events);
-ep.startPlay();
+//var ep = new EventPlayer(events);
+//ep.startPlay();
+var ep = new EventPlayer();
+ep.startCapture();
