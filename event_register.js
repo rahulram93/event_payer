@@ -21,6 +21,7 @@ var EventPlayer = (function() {
       'select',
       'wheel'
     ];
+    this.registeredEvents = [];
     return this;
   }
   
@@ -35,6 +36,10 @@ var EventPlayer = (function() {
         bubbles: true,
         cancelable: true
       });
+    } else if (event.type == "input"){
+      domEvent = new Event('input', { bubbles: true });
+      domEvent.simulated = true;
+      element.value = event.value;
     }
     if (!domEvent) return false;
     element.dispatchEvent(domEvent);
@@ -63,17 +68,27 @@ var EventPlayer = (function() {
   EventPlayer.prototype.eventListener = function(){
     var that = this;
     this.mouseEvents.forEach(function(event){
-      document.addEventListener(event, function(event){
+      var eventFunction = function(event) {
         that.events.push({
           xpath: event.target,
           type: event.type
         });
-      });
+      }
+      document.addEventListener(event, eventFunction);
+      that.registeredEvents.push([event, eventFunction]);
     });
   }
 
+
   EventPlayer.prototype.startCapture = function(){
     this.eventListener();
+  }
+
+  EventPlayer.prototype.disableCapture = function(){
+    var that = this;
+    that.registeredEvents.forEach(function(eventItem){
+      document.removeEventListener(eventItem[0], eventItem[1]);
+    });
   }
 
   return EventPlayer;
